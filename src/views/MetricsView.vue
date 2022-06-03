@@ -1,8 +1,7 @@
 <template>
   <v-container>
-    <!-- Otomatis dari vue.js mengubah components CreateMetricDialog menjadi <create-metric-dialog/> -->
-    <!-- Button metric dialog -->
-    <h1 class="blue--text">Metric</h1>
+    <h1 class="blue--text">Metric Management</h1>
+
     <v-layout>
       <v-layout>
         <v-layout justify-end class="pa-md-2 mx-lg-auto">
@@ -24,6 +23,7 @@
         </v-layout>
       </v-layout>
     </v-layout>
+
     <v-data-table
       :page="paginate.page"
       :headers="headers"
@@ -32,6 +32,7 @@
       :server-items-length="totalMetric"
       class="mt-6 row-pointer"
     >
+      <!-- Pakai props karena data metrics dari backend tidak ada headers nya -->
       <template #item="props">
         <tr>
           <td>{{ changeIndex(props.index) }}</td>
@@ -45,9 +46,7 @@
                   class="blue--text"
                   v-on="on"
                   style="margin-right: 0.5%"
-                  @click="
-                    showUpdateDialog(props.item.systemid)
-                  "
+                  @click="showUpdateDialog(props.item.systemid)"
                 >
                   mdi-pencil
                 </v-icon>
@@ -77,6 +76,8 @@
         </tr>
       </template>
     </v-data-table>
+
+    <!-- otomatis dari vue.js mengubah components CreateMetricDialog menjadi <create-metric-dialog/> -->
     <create-metric-dialog ref="create_metric_dialog" @refresh="refresh()" />
     <update-metric-dialog ref="update_metric_dialog" @refresh="refresh()" />
     <delete-metric-dialog ref="delete_metric_dialog" @refresh="refresh()" />
@@ -94,7 +95,7 @@ import DeleteMetricDialog from "@/components/moduleSpecific/metrics/DeleteMetric
 const MetricsRepo = Repository.get("metrics");
 
 export default {
-  name: "metrics",
+  name: "MetricsView",
   components: {
     CreateMetricDialog,
     UpdateMetricDialog,
@@ -104,14 +105,13 @@ export default {
     this.getMetrics();
   },
   data: () => ({
-    headers: [{ 
-      text: "No." , sortable: false }, 
-      { text: "Metric Name" , sortable: false }, 
-      { text: "Memo" , sortable: false }, 
-      { text: "Action" , sortable: false , align: "center" }
+    headers: [
+      { text: "No.", sortable: false },
+      { text: "Metric Name", sortable: false },
+      { text: "Memo", sortable: false },
+      { text: "Action", sortable: false, align: "center" },
     ],
     metrics: [],
-    // totalMetric adalah keseluruhan data yang ada di backend
     totalMetric: 1,
     paginate: {
       page: 1,
@@ -141,9 +141,10 @@ export default {
     // await merupakan properti dari async
     async getMetrics() {
       const { page, itemsPerPage } = this.paginate;
-      console.log("Paginate", this.paginate);
+      // console.log("Paginate", this.paginate);
       this.search.page = page;
 
+      // handle kalo mau paginate nya All -> karena return itemsPerPage nya = -1
       if (itemsPerPage === -1) {
         this.search.limit = this.totalMetric;
       } else {
@@ -154,11 +155,11 @@ export default {
         // buat variable response, untuk menampung data metrics yang di get dari API
         const response = await MetricsRepo.getMetrics(this.search);
         this.metrics = response.data;
-        // meta digunakan untuk
+        // meta digunakan untuk melihat informasi page yang telah di GET
         this.totalMetric = response.data.meta.total;
-        console.log("Debug resp: ", this.totalMetric);
+        // console.log("Debug resp: ", response.data.meta);
       } catch (error) {
-        console.log("ERROR Get Metrics \n", error);
+        console.log("[ ERROR ] Get Metrics \n", error);
       }
     },
     async refresh() {

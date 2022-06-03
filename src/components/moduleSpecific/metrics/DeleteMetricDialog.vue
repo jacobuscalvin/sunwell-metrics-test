@@ -24,7 +24,7 @@ import { Repository } from "@/repositories/repository";
 const MetricsRepo = Repository.get("metrics");
 
 export default {
-  name: "DeleteMetricsDialog",
+  name: "DeleteMetricDialog",
   data: () => ({
     dialog: false,
     selectedId: "",

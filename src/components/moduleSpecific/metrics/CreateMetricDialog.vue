@@ -21,6 +21,7 @@
           <span>Close</span>
         </v-tooltip>
       </v-toolbar>
+
       <v-card-text>
         <v-form class="pt-4" v-model="valid">
           <v-text-field
@@ -63,11 +64,13 @@ import { Repository } from "@/repositories/repository";
 const MetricsRepo = Repository.get("metrics");
 
 export default {
-  name: "CreateMetricsDialog",
+  name: "CreateMetricDialog",
   data: () => ({
     dialog: false,
     valid: false,
     rules: {
+      // dipanggil oleh :rules, kemudian cek v-model
+      // !! -> untuk return boolean (statement if)
       required: (v) => !!v || "Field is required",
     },
     request: {
@@ -85,7 +88,7 @@ export default {
     async createMetric() {
       await MetricsRepo.createMetric(this.request)
         .then((res) => {
-          console.log("Created");
+          // console.log("Created");
           window.alert("Success Create Metric: " + this.request.name);
           this.request.name = "";
           this.request.memo = "";

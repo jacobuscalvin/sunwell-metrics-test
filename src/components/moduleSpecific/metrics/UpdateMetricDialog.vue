@@ -69,7 +69,8 @@ export default {
     valid: false,
     selectedId: "",
     rules: {
-      // cek null atau ngga v-model (pakai rules)
+      // dipanggil oleh :rules, kemudian cek v-model
+      // !! -> untuk return boolean (statement if)
       required: (v) => !!v || "Field is required",
     },
     request: {
@@ -88,7 +89,7 @@ export default {
         const response = await MetricsRepo.getById(_systemid);
         this.request.name = response.data.name;
         this.request.memo = response.data.memo;
-        console.log("[DEBUG] Response", response)
+        console.log("[DEBUG] Response", response);
       } catch (error) {
         console.log("[ERROR] \n", error);
       }
@@ -104,9 +105,9 @@ export default {
           this.dialog = false;
         })
         .catch((err) => {
-          console.log("Error \n", err)
+          console.log("Error \n", err);
         });
-    }
-  }
-}
+    },
+  },
+};
 </script>
